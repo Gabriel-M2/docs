@@ -1,0 +1,155 @@
+---
+title: "Listar Transações"
+description: "Endpoint para listar transações com filtros e paginação"
+method: "GET"
+endpoint: "/transactions"
+---
+
+# Listar Transações
+
+Retorna as transações de um usuário com suporte a filtros avançados e paginação.
+
+## Endpoint
+
+```
+GET /transactions
+```
+
+## Parâmetros de Query
+
+| Parâmetro | Tipo | Obrigatório | Descrição |
+|-----------|------|-------------|-----------|
+| `userId` | string | ✅ | ID do usuário |
+| `type` | string | ❌ | Tipo da transação (INCOME, EXPENSE) |
+| `category` | string | ❌ | ID da categoria |
+| `account` | string | ❌ | ID da conta |
+| `startDate` | date | ❌ | Data inicial (YYYY-MM-DD) |
+| `endDate` | date | ❌ | Data final (YYYY-MM-DD) |
+| `search` | string | ❌ | Termo de busca na descrição |
+| `page` | integer | ❌ | Página (padrão: 1) |
+| `limit` | integer | ❌ | Itens por página (padrão: 20) |
+
+## Exemplo de Requisição
+
+```bash
+curl -X GET "http://localhost:8080/transactions?userId=00000000-0000-0000-0000-000000000001&page=1&limit=10" \
+  -H "Content-Type: application/json"
+```
+
+### Com filtros
+
+```bash
+curl -X GET "http://localhost:8080/transactions?userId=00000000-0000-0000-0000-000000000001&type=EXPENSE&startDate=2024-01-01&endDate=2024-01-31&page=1&limit=20" \
+  -H "Content-Type: application/json"
+```
+
+## Resposta de Sucesso
+
+```json
+{
+  "success": true,
+  "data": {
+    "transactions": [
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "description": "Supermercado",
+        "amount": 150.50,
+        "type": "EXPENSE",
+        "category": "550e8400-e29b-41d4-a716-446655440001",
+        "account": "550e8400-e29b-41d4-a716-446655440002",
+        "date": "2024-01-15",
+        "tags": ["alimentação", "supermercado"],
+        "recurring": false,
+        "recurringId": null,
+        "attachment": null,
+        "notes": "Compra do mês",
+        "createdAt": "2024-01-15T10:30:00Z",
+        "updatedAt": "2024-01-15T10:30:00Z"
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "limit": 20,
+      "total": 150,
+      "totalPages": 8
+    }
+  }
+}
+```
+
+## Resposta de Erro
+
+```json
+{
+  "success": false,
+  "error": "ERROR",
+  "message": "userId é obrigatório"
+}
+```
+
+## Códigos de Status
+
+- `200 OK` - Sucesso
+- `400 Bad Request` - Parâmetros inválidos
+
+## Estrutura da Resposta
+
+### TransactionDto
+
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `id` | string | ID único da transação |
+| `description` | string | Descrição da transação |
+| `amount` | BigDecimal | Valor da transação |
+| `type` | string | Tipo (INCOME, EXPENSE) |
+| `category` | string | ID da categoria |
+| `account` | string | ID da conta |
+| `date` | LocalDate | Data da transação |
+| `tags` | List<string> | Tags associadas |
+| `recurring` | boolean | Se é recorrente |
+| `recurringId` | string | ID da transação recorrente |
+| `attachment` | string | URL do anexo |
+| `notes` | string | Observações |
+| `createdAt` | LocalDateTime | Data de criação |
+| `updatedAt` | LocalDateTime | Data de atualização |
+
+### Pagination
+
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `page` | integer | Página atual |
+| `limit` | integer | Itens por página |
+| `total` | integer | Total de itens |
+| `totalPages` | integer | Total de páginas |
+
+## Filtros Disponíveis
+
+### Por Tipo
+- `INCOME` - Apenas receitas
+- `EXPENSE` - Apenas despesas
+
+### Por Período
+- `startDate` - Data inicial (inclusive)
+- `endDate` - Data final (inclusive)
+
+### Por Categoria/Conta
+- `category` - ID da categoria específica
+- `account` - ID da conta específica
+
+### Busca Textual
+- `search` - Busca na descrição da transação
+
+## Paginação
+
+- **page**: Número da página (começa em 1)
+- **limit**: Máximo de itens por página (padrão: 20, máximo: 100)
+- **total**: Total de transações que atendem aos filtros
+- **totalPages**: Total de páginas disponíveis
+
+## Observações
+
+- As transações são ordenadas por data (mais recentes primeiro)
+- Filtros podem ser combinados
+- A busca textual é case-insensitive
+- Datas devem estar no formato ISO (YYYY-MM-DD)
+- Se nenhum filtro for aplicado, retorna todas as transações do usuário 

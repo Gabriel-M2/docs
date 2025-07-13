@@ -1,0 +1,104 @@
+---
+title: "Buscar Categorias"
+description: "Endpoint para buscar categorias por nome usando busca textual"
+method: "GET"
+endpoint: "/categories/search"
+---
+
+# Buscar Categorias
+
+Realiza uma busca textual nas categorias do usuário, retornando categorias cujo nome contenha o termo de busca.
+
+## Endpoint
+
+```
+GET /categories/search
+```
+
+## Parâmetros de Query
+
+| Parâmetro | Tipo | Obrigatório | Descrição |
+|-----------|------|-------------|-----------|
+| `q` | string | ✅ | Termo de busca |
+| `userId` | string | ✅ | ID do usuário |
+
+## Exemplo de Requisição
+
+```bash
+curl -X GET "http://localhost:8080/categories/search?q=alimentação&userId=00000000-0000-0000-0000-000000000001" \
+  -H "Content-Type: application/json"
+```
+
+## Resposta de Sucesso
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "name": "Alimentação",
+      "type": "EXPENSE",
+      "color": "#EF4444",
+      "icon": "utensils",
+      "budget": 800.00,
+      "spent": 450.00
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440002",
+      "name": "Alimentação Empresarial",
+      "type": "EXPENSE",
+      "color": "#DC2626",
+      "icon": "building",
+      "budget": 500.00,
+      "spent": 200.00
+    }
+  ]
+}
+```
+
+## Resposta de Erro
+
+```json
+{
+  "success": false,
+  "error": "ERROR",
+  "message": "Erro ao buscar categorias: Termo de busca é obrigatório"
+}
+```
+
+## Códigos de Status
+
+- `200 OK` - Busca realizada com sucesso
+- `400 Bad Request` - Parâmetros inválidos
+
+## Características da Busca
+
+- **Case-insensitive**: A busca não diferencia maiúsculas de minúsculas
+- **Busca parcial**: Retorna categorias que contenham o termo de busca em qualquer parte do nome
+- **Filtro por usuário**: Apenas categorias do usuário especificado são consideradas
+- **Resultados ordenados**: As categorias são retornadas na ordem padrão do sistema
+
+## Exemplos de Busca
+
+| Termo de Busca | Resultados Esperados |
+|----------------|---------------------|
+| `alimentação` | Alimentação, Alimentação Empresarial |
+| `transporte` | Transporte, Transporte Público |
+| `lazer` | Lazer, Lazer e Entretenimento |
+| `saúde` | Saúde, Saúde e Bem-estar |
+
+## Observações
+
+- A busca é realizada apenas no campo `name` das categorias
+- Se nenhuma categoria for encontrada, retorna uma lista vazia
+- O termo de busca deve ter pelo menos 1 caractere
+- A busca é otimizada para performance com índices no banco de dados
+- Inclui informações de orçamento e gastos nas categorias retornadas
+
+## Casos de Uso
+
+- Busca rápida de categorias para associar a transações
+- Filtragem de categorias em formulários
+- Autocompletar em interfaces de usuário
+- Navegação em listas grandes de categorias 

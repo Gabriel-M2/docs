@@ -1,0 +1,87 @@
+---
+title: "Buscar Conta por ID"
+description: "Endpoint para buscar uma conta específica pelo ID"
+method: "GET"
+endpoint: "/accounts/{id}"
+---
+
+# Buscar Conta por ID
+
+Retorna os detalhes de uma conta específica pelo seu ID.
+
+## Endpoint
+
+```
+GET /accounts/{id}
+```
+
+## Parâmetros de Path
+
+| Parâmetro | Tipo | Obrigatório | Descrição |
+|-----------|------|-------------|-----------|
+| `id` | string | ✅ | ID único da conta |
+
+## Parâmetros de Query
+
+| Parâmetro | Tipo | Obrigatório | Descrição |
+|-----------|------|-------------|-----------|
+| `userId` | string | ✅ | ID do usuário |
+
+## Exemplo de Requisição
+
+```bash
+curl -X GET "http://localhost:8080/accounts/550e8400-e29b-41d4-a716-446655440000?userId=00000000-0000-0000-0000-000000000001" \
+  -H "Content-Type: application/json"
+```
+
+## Resposta de Sucesso
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "name": "Conta Corrente",
+    "type": "CHECKING",
+    "balance": 1500.00,
+    "currency": "BRL",
+    "color": "#3B82F6",
+    "icon": "bank"
+  }
+}
+```
+
+## Resposta de Erro
+
+```json
+{
+  "success": false,
+  "error": "ERROR",
+  "message": "Conta não encontrada"
+}
+```
+
+## Códigos de Status
+
+- `200 OK` - Sucesso
+- `404 Not Found` - Conta não encontrada
+- `400 Bad Request` - Parâmetros inválidos
+
+## Estrutura da Resposta
+
+### AccountDto
+
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `id` | string | ID único da conta |
+| `name` | string | Nome da conta |
+| `type` | string | Tipo da conta (CHECKING, SAVINGS, CREDIT, etc.) |
+| `balance` | BigDecimal | Saldo atual da conta |
+| `currency` | string | Moeda da conta (BRL, USD, EUR, etc.) |
+| `color` | string | Cor para exibição (formato hexadecimal) |
+| `icon` | string | Ícone para exibição |
+
+## Observações
+
+- A conta deve pertencer ao usuário especificado no parâmetro `userId`
+- Se a conta não existir ou não pertencer ao usuário, retorna erro 404 

@@ -1,0 +1,112 @@
+---
+title: "Buscar Transação por ID"
+description: "Endpoint para buscar uma transação específica pelo ID"
+method: "GET"
+endpoint: "/transactions/{id}"
+---
+
+# Buscar Transação por ID
+
+Retorna os detalhes completos de uma transação específica pelo seu ID.
+
+## Endpoint
+
+```
+GET /transactions/{id}
+```
+
+## Parâmetros de Path
+
+| Parâmetro | Tipo | Obrigatório | Descrição |
+|-----------|------|-------------|-----------|
+| `id` | string | ✅ | ID único da transação |
+
+## Parâmetros de Query
+
+| Parâmetro | Tipo | Obrigatório | Descrição |
+|-----------|------|-------------|-----------|
+| `userId` | string | ✅ | ID do usuário |
+
+## Exemplo de Requisição
+
+```bash
+curl -X GET "http://localhost:8080/transactions/550e8400-e29b-41d4-a716-446655440000?userId=00000000-0000-0000-0000-000000000001" \
+  -H "Content-Type: application/json"
+```
+
+## Resposta de Sucesso
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "description": "Supermercado",
+    "amount": 150.50,
+    "type": "EXPENSE",
+    "category": "550e8400-e29b-41d4-a716-446655440001",
+    "account": "550e8400-e29b-41d4-a716-446655440002",
+    "date": "2024-01-15",
+    "tags": ["alimentação", "supermercado"],
+    "recurring": false,
+    "recurringId": null,
+    "attachment": "https://example.com/attachments/receipt.pdf",
+    "notes": "Compra do mês - produtos de limpeza e alimentos",
+    "createdAt": "2024-01-15T10:30:00Z",
+    "updatedAt": "2024-01-15T10:30:00Z"
+  }
+}
+```
+
+## Resposta de Erro
+
+```json
+{
+  "success": false,
+  "error": "ERROR",
+  "message": "Transação não encontrada"
+}
+```
+
+## Códigos de Status
+
+- `200 OK` - Sucesso
+- `404 Not Found` - Transação não encontrada
+- `400 Bad Request` - Parâmetros inválidos
+
+## Estrutura da Resposta
+
+### TransactionDto
+
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `id` | string | ID único da transação |
+| `description` | string | Descrição da transação |
+| `amount` | BigDecimal | Valor da transação |
+| `type` | string | Tipo (INCOME, EXPENSE) |
+| `category` | string | ID da categoria |
+| `account` | string | ID da conta |
+| `date` | LocalDate | Data da transação |
+| `tags` | List<string> | Tags associadas |
+| `recurring` | boolean | Se é recorrente |
+| `recurringId` | string | ID da transação recorrente |
+| `attachment` | string | URL do anexo |
+| `notes` | string | Observações |
+| `createdAt` | LocalDateTime | Data de criação |
+| `updatedAt` | LocalDateTime | Data de atualização |
+
+## Observações
+
+- A transação deve pertencer ao usuário especificado no parâmetro `userId`
+- Se a transação não existir ou não pertencer ao usuário, retorna erro 404
+- Todos os campos da transação são retornados, incluindo metadados
+- O campo `recurringId` é preenchido apenas para transações recorrentes
+- O campo `attachment` pode ser null se não houver anexo
+
+## Casos de Uso
+
+- Visualização detalhada de uma transação
+- Edição de transação (obter dados atuais)
+- Auditoria e histórico de transações
+- Integração com sistemas externos
+- Relatórios detalhados 

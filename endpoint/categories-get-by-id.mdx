@@ -1,0 +1,89 @@
+---
+title: "Buscar Categoria por ID"
+description: "Endpoint para buscar uma categoria específica pelo ID"
+method: "GET"
+endpoint: "/categories/{id}"
+---
+
+# Buscar Categoria por ID
+
+Retorna os detalhes de uma categoria específica pelo seu ID.
+
+## Endpoint
+
+```
+GET /categories/{id}
+```
+
+## Parâmetros de Path
+
+| Parâmetro | Tipo | Obrigatório | Descrição |
+|-----------|------|-------------|-----------|
+| `id` | string | ✅ | ID único da categoria |
+
+## Parâmetros de Query
+
+| Parâmetro | Tipo | Obrigatório | Descrição |
+|-----------|------|-------------|-----------|
+| `userId` | string | ✅ | ID do usuário |
+
+## Exemplo de Requisição
+
+```bash
+curl -X GET "http://localhost:8080/categories/550e8400-e29b-41d4-a716-446655440000?userId=00000000-0000-0000-0000-000000000001" \
+  -H "Content-Type: application/json"
+```
+
+## Resposta de Sucesso
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "name": "Alimentação",
+    "type": "EXPENSE",
+    "color": "#EF4444",
+    "icon": "utensils",
+    "budget": 800.00,
+    "spent": 450.00
+  }
+}
+```
+
+## Resposta de Erro
+
+```json
+{
+  "success": false,
+  "error": "ERROR",
+  "message": "Categoria não encontrada"
+}
+```
+
+## Códigos de Status
+
+- `200 OK` - Sucesso
+- `404 Not Found` - Categoria não encontrada
+- `400 Bad Request` - Parâmetros inválidos
+
+## Estrutura da Resposta
+
+### CategoryDto
+
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `id` | string | ID único da categoria |
+| `name` | string | Nome da categoria |
+| `type` | string | Tipo da categoria (INCOME, EXPENSE) |
+| `color` | string | Cor para exibição (formato hexadecimal) |
+| `icon` | string | Ícone para exibição |
+| `budget` | BigDecimal | Orçamento definido para a categoria |
+| `spent` | BigDecimal | Valor total gasto na categoria |
+
+## Observações
+
+- A categoria deve pertencer ao usuário especificado no parâmetro `userId`
+- Se a categoria não existir ou não pertencer ao usuário, retorna erro 404
+- O campo `spent` é calculado em tempo real baseado nas transações associadas
+- O campo `budget` pode ser 0.00 se nenhum orçamento foi definido 

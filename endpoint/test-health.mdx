@@ -1,0 +1,85 @@
+---
+title: "Teste de Saúde da API"
+description: "Endpoint para verificar se a API está funcionando"
+method: "GET"
+endpoint: "/test"
+---
+
+# Teste de Saúde da API
+
+Verifica se a API está funcionando corretamente e retorna informações básicas sobre o serviço.
+
+## Endpoint
+
+```
+GET /test
+```
+
+## Exemplo de Requisição
+
+```bash
+curl -X GET "http://localhost:8080/test" \
+  -H "Content-Type: application/json"
+```
+
+## Resposta de Sucesso
+
+```json
+{
+  "success": true,
+  "message": "API de Finanças funcionando!",
+  "timestamp": 1705312800000
+}
+```
+
+## Estrutura da Resposta
+
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `success` | boolean | Sempre true se a API estiver funcionando |
+| `message` | string | Mensagem de confirmação |
+| `timestamp` | long | Timestamp atual em milissegundos |
+
+## Códigos de Status
+
+- `200 OK` - API funcionando normalmente
+
+## Casos de Uso
+
+- **Health Check**: Verificar se a API está online
+- **Monitoramento**: Integração com sistemas de monitoramento
+- **Load Balancer**: Verificação de saúde para balanceadores de carga
+- **Desenvolvimento**: Teste rápido durante desenvolvimento
+- **Deploy**: Verificação pós-deploy
+
+## Observações
+
+- Este endpoint não requer autenticação
+- Resposta rápida e leve
+- Útil para verificações de conectividade
+- Não acessa o banco de dados
+- Ideal para health checks externos
+
+## Integração com Sistemas
+
+### Kubernetes
+```yaml
+livenessProbe:
+  httpGet:
+    path: /test
+    port: 8080
+  initialDelaySeconds: 30
+  periodSeconds: 10
+```
+
+### Docker
+```dockerfile
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:8080/test || exit 1
+```
+
+### AWS ELB
+- Configure o health check para apontar para `/test`
+- Intervalo recomendado: 30 segundos
+- Timeout: 5 segundos
+- Threshold: 2 falhas consecutivas 

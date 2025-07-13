@@ -1,0 +1,115 @@
+---
+title: "Criar Conta"
+description: "Endpoint para criar uma nova conta"
+method: "POST"
+endpoint: "/accounts"
+---
+
+# Criar Conta
+
+Cria uma nova conta para o usuário especificado.
+
+## Endpoint
+
+```
+POST /accounts
+```
+
+## Parâmetros de Query
+
+| Parâmetro | Tipo | Obrigatório | Descrição |
+|-----------|------|-------------|-----------|
+| `userId` | string | ✅ | ID do usuário |
+
+## Corpo da Requisição
+
+```json
+{
+  "name": "Conta Corrente",
+  "type": "CHECKING",
+  "balance": 1500.00,
+  "currency": "BRL",
+  "color": "#3B82F6",
+  "icon": "bank"
+}
+```
+
+### AccountCreateRequest
+
+| Campo | Tipo | Obrigatório | Validação | Descrição |
+|-------|------|-------------|-----------|-----------|
+| `name` | string | ✅ | Máx 100 chars | Nome da conta |
+| `type` | string | ✅ | Máx 20 chars | Tipo da conta |
+| `balance` | BigDecimal | ✅ | ≥ 0 | Saldo inicial |
+| `currency` | string | ✅ | 3 chars | Código da moeda |
+| `color` | string | ❌ | Máx 7 chars | Cor para exibição |
+| `icon` | string | ❌ | Máx 50 chars | Ícone para exibição |
+
+## Exemplo de Requisição
+
+```bash
+curl -X POST "http://localhost:8080/accounts?userId=00000000-0000-0000-0000-000000000001" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Conta Corrente",
+    "type": "CHECKING",
+    "balance": 1500.00,
+    "currency": "BRL",
+    "color": "#3B82F6",
+    "icon": "bank"
+  }'
+```
+
+## Resposta de Sucesso
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "name": "Conta Corrente",
+    "type": "CHECKING",
+    "balance": 1500.00,
+    "currency": "BRL",
+    "color": "#3B82F6",
+    "icon": "bank"
+  }
+}
+```
+
+## Resposta de Erro
+
+```json
+{
+  "success": false,
+  "error": "ERROR",
+  "message": "Conta já existe com este nome"
+}
+```
+
+## Códigos de Status
+
+- `201 Created` - Conta criada com sucesso
+- `400 Bad Request` - Dados inválidos ou conta já existe
+
+## Tipos de Conta Disponíveis
+
+- `CHECKING` - Conta Corrente
+- `SAVINGS` - Poupança
+- `CREDIT` - Cartão de Crédito
+- `INVESTMENT` - Investimento
+- `CASH` - Dinheiro em Espécie
+
+## Códigos de Moeda Comuns
+
+- `BRL` - Real Brasileiro
+- `USD` - Dólar Americano
+- `EUR` - Euro
+- `GBP` - Libra Esterlina
+
+## Validações
+
+- O nome da conta deve ser único para o usuário
+- O saldo inicial deve ser maior ou igual a zero
+- O código da moeda deve ter exatamente 3 caracteres
+- O nome da conta deve ter no máximo 100 caracteres 

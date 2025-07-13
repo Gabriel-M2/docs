@@ -1,0 +1,117 @@
+---
+title: "Deletar Transação"
+description: "Endpoint para deletar uma transação específica"
+method: "DELETE"
+endpoint: "/transactions/{id}"
+---
+
+# Deletar Transação
+
+Remove uma transação específica do sistema. A transação deve pertencer ao usuário especificado.
+
+## Endpoint
+
+```
+DELETE /transactions/{id}
+```
+
+## Parâmetros de Path
+
+| Parâmetro | Tipo | Obrigatório | Descrição |
+|-----------|------|-------------|-----------|
+| `id` | string | ✅ | ID único da transação |
+
+## Parâmetros de Query
+
+| Parâmetro | Tipo | Obrigatório | Descrição |
+|-----------|------|-------------|-----------|
+| `userId` | string | ✅ | ID do usuário |
+
+## Exemplo de Requisição
+
+```bash
+curl -X DELETE "http://localhost:8080/transactions/550e8400-e29b-41d4-a716-446655440000?userId=00000000-0000-0000-0000-000000000001" \
+  -H "Content-Type: application/json"
+```
+
+## Resposta de Sucesso
+
+```json
+{
+  "success": true,
+  "message": "Transação deletada com sucesso"
+}
+```
+
+## Resposta de Erro
+
+```json
+{
+  "success": false,
+  "error": "ERROR",
+  "message": "Transação não encontrada"
+}
+```
+
+## Códigos de Status
+
+- `200 OK` - Transação deletada com sucesso
+- `400 Bad Request` - Erro ao deletar transação
+- `404 Not Found` - Transação não encontrada
+
+## Observações
+
+- A transação deve pertencer ao usuário especificado no parâmetro `userId`
+- A operação é irreversível - todos os dados da transação serão perdidos
+- O saldo da conta será ajustado automaticamente
+- Se a categoria tiver orçamento, o campo `spent` será atualizado
+
+## Impacto da Deleção
+
+### Saldo da Conta
+- O saldo da conta será recalculado removendo o valor da transação
+- Para despesas: o saldo aumentará
+- Para receitas: o saldo diminuirá
+
+### Orçamento da Categoria
+- Se a categoria tiver orçamento definido, o campo `spent` será reduzido
+- Apenas transações do tipo `EXPENSE` afetam o orçamento
+
+### Transações Recorrentes
+- Se a transação for parte de uma série recorrente, apenas esta instância será removida
+- A configuração da transação recorrente permanecerá intacta
+
+### Relatórios e Análises
+- Dados históricos podem ser afetados
+- Gráficos e dashboards serão atualizados
+- Relatórios de período podem ser impactados
+
+## Considerações de Segurança
+
+- Apenas o proprietário da transação pode deletá-la
+- A operação requer autenticação e autorização
+- Logs de auditoria devem ser mantidos para esta operação
+- Transações muito antigas podem ter restrições especiais
+
+## Casos de Uso
+
+- Correção de transações incorretas
+- Remoção de transações duplicadas
+- Limpeza de dados de teste
+- Ajuste de saldos de conta
+- Correção de categorização
+
+## Recomendações
+
+- Faça backup dos dados antes de deletar transações importantes
+- Verifique o impacto no saldo da conta
+- Considere o impacto em relatórios e análises
+- Documente a razão da deleção para auditoria
+- Para transações recorrentes, considere desativar a recorrência em vez de deletar
+
+## Validações Especiais
+
+- Transações muito antigas podem ter restrições
+- Transações de períodos fechados podem ser protegidas
+- Transações com anexos podem requerer limpeza adicional
+- Transações que afetam saldos críticos podem ter confirmação adicional 

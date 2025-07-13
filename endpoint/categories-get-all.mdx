@@ -1,0 +1,106 @@
+---
+title: "Listar Categorias"
+description: "Endpoint para listar todas as categorias de um usuário ou filtrar por tipo"
+method: "GET"
+endpoint: "/categories"
+---
+
+# Listar Categorias
+
+Retorna todas as categorias de um usuário específico, com opção de filtrar por tipo (receita ou despesa).
+
+## Endpoint
+
+```
+GET /categories
+```
+
+## Parâmetros de Query
+
+| Parâmetro | Tipo | Obrigatório | Descrição |
+|-----------|------|-------------|-----------|
+| `userId` | string | ✅ | ID do usuário |
+| `type` | string | ❌ | Tipo da categoria (INCOME, EXPENSE) |
+
+## Exemplo de Requisição
+
+```bash
+curl -X GET "http://localhost:8080/categories?userId=00000000-0000-0000-0000-000000000001" \
+  -H "Content-Type: application/json"
+```
+
+### Com filtro por tipo
+
+```bash
+curl -X GET "http://localhost:8080/categories?userId=00000000-0000-0000-0000-000000000001&type=EXPENSE" \
+  -H "Content-Type: application/json"
+```
+
+## Resposta de Sucesso
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "name": "Alimentação",
+      "type": "EXPENSE",
+      "color": "#EF4444",
+      "icon": "utensils",
+      "budget": 800.00,
+      "spent": 450.00
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440001",
+      "name": "Salário",
+      "type": "INCOME",
+      "color": "#10B981",
+      "icon": "money-bill",
+      "budget": 0.00,
+      "spent": 0.00
+    }
+  ]
+}
+```
+
+## Resposta de Erro
+
+```json
+{
+  "success": false,
+  "error": "ERROR",
+  "message": "userId é obrigatório"
+}
+```
+
+## Códigos de Status
+
+- `200 OK` - Sucesso
+- `400 Bad Request` - Parâmetros inválidos ou userId não fornecido
+
+## Estrutura da Resposta
+
+### CategoryDto
+
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `id` | string | ID único da categoria |
+| `name` | string | Nome da categoria |
+| `type` | string | Tipo da categoria (INCOME, EXPENSE) |
+| `color` | string | Cor para exibição (formato hexadecimal) |
+| `icon` | string | Ícone para exibição |
+| `budget` | BigDecimal | Orçamento definido para a categoria |
+| `spent` | BigDecimal | Valor total gasto na categoria |
+
+## Tipos de Categoria
+
+- `INCOME` - Receitas (salários, investimentos, etc.)
+- `EXPENSE` - Despesas (alimentação, transporte, etc.)
+
+## Observações
+
+- Categorias de receita (`INCOME`) geralmente não têm orçamento definido
+- O campo `spent` é calculado automaticamente baseado nas transações
+- O campo `budget` pode ser 0.00 se nenhum orçamento foi definido
+- As categorias são retornadas ordenadas por nome 

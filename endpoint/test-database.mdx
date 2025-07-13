@@ -1,0 +1,197 @@
+---
+title: "Verificação do Banco de Dados"
+description: "Endpoint para verificar a conectividade e dados do banco de dados"
+method: "GET"
+endpoint: "/test/database-check"
+---
+
+# Verificação do Banco de Dados
+
+Verifica a conectividade com o banco de dados e retorna informações sobre as entidades principais.
+
+## Endpoint
+
+```
+GET /test/database-check
+```
+
+## Exemplo de Requisição
+
+```bash
+curl -X GET "http://localhost:8080/test/database-check" \
+  -H "Content-Type: application/json"
+```
+
+## Resposta de Sucesso
+
+```json
+{
+  "success": true,
+  "data": {
+    "users": {
+      "total": 1,
+      "data": [
+        {
+          "id": "00000000-0000-0000-0000-000000000001",
+          "name": "Usuário Teste",
+          "email": "teste@example.com"
+        }
+      ]
+    },
+    "accounts": {
+      "total": 3,
+      "data": [
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440000",
+          "name": "Conta Corrente",
+          "type": "CHECKING",
+          "balance": 1500.00
+        }
+      ]
+    },
+    "categories": {
+      "total": 5,
+      "data": [
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440001",
+          "name": "Alimentação",
+          "type": "EXPENSE"
+        }
+      ]
+    },
+    "transactions": {
+      "total": 25,
+      "data": [
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440002",
+          "description": "Supermercado",
+          "amount": 150.50,
+          "type": "EXPENSE"
+        }
+      ]
+    }
+  }
+}
+```
+
+## Resposta de Erro
+
+```json
+{
+  "success": false,
+  "error": "DATABASE_ERROR",
+  "message": "Erro ao verificar banco de dados: Connection refused",
+  "stackTrace": [...]
+}
+```
+
+## Códigos de Status
+
+- `200 OK` - Banco de dados funcionando
+- `500 Internal Server Error` - Erro de conectividade
+
+## Estrutura da Resposta
+
+### Dados de Usuários
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `total` | integer | Número total de usuários |
+| `data` | array | Lista de usuários (limitada) |
+
+### Dados de Contas
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `total` | integer | Número total de contas |
+| `data` | array | Lista de contas (limitada) |
+
+### Dados de Categorias
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `total` | integer | Número total de categorias |
+| `data` | array | Lista de categorias (limitada) |
+
+### Dados de Transações
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `total` | integer | Número total de transações |
+| `data` | array | Lista de transações (limitada) |
+
+## Casos de Uso
+
+- **Debugging**: Verificar se o banco está acessível
+- **Desenvolvimento**: Confirmar dados de seed
+- **DevOps**: Verificação pós-deploy
+- **Suporte**: Diagnóstico de problemas
+- **Testes**: Validação de ambiente
+
+## Observações
+
+- Este endpoint não requer autenticação
+- Retorna dados limitados para performance
+- Útil para verificação de conectividade
+- Inclui stack trace em caso de erro
+- Ideal para troubleshooting
+
+## Verificações Realizadas
+
+### Conectividade
+- Conexão com o banco de dados
+- Execução de queries básicas
+- Verificação de permissões
+
+### Dados
+- Contagem de registros por tabela
+- Amostra de dados para validação
+- Verificação de integridade básica
+
+### Performance
+- Tempo de resposta das queries
+- Verificação de índices
+- Análise de performance básica
+
+## Troubleshooting
+
+### Erro de Conexão
+```json
+{
+  "success": false,
+  "error": "DATABASE_ERROR",
+  "message": "Connection refused"
+}
+```
+
+**Possíveis Causas:**
+- Banco de dados não está rodando
+- Configuração de conexão incorreta
+- Firewall bloqueando conexão
+- Credenciais inválidas
+
+### Erro de Permissão
+```json
+{
+  "success": false,
+  "error": "DATABASE_ERROR",
+  "message": "Access denied"
+}
+```
+
+**Possíveis Causas:**
+- Usuário sem permissões adequadas
+- Schema não existe
+- Tabelas não criadas
+
+## Integração com Monitoramento
+
+### Prometheus
+```yaml
+scrape_configs:
+  - job_name: 'finance-api-db'
+    metrics_path: /test/database-check
+    static_configs:
+      - targets: ['localhost:8080']
+```
+
+### Alertas
+- Configure alertas para falhas de conectividade
+- Monitore tempo de resposta
+- Alerte sobre dados inconsistentes 

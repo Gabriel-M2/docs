@@ -1,0 +1,90 @@
+---
+title: "Saldo Total das Contas"
+description: "Endpoint para obter o saldo total de todas as contas de um usuário"
+method: "GET"
+endpoint: "/accounts/total-balance"
+---
+
+# Saldo Total das Contas
+
+Calcula e retorna o saldo total de todas as contas de um usuário específico.
+
+## Endpoint
+
+```
+GET /accounts/total-balance
+```
+
+## Parâmetros de Query
+
+| Parâmetro | Tipo | Obrigatório | Descrição |
+|-----------|------|-------------|-----------|
+| `userId` | string | ✅ | ID do usuário |
+
+## Exemplo de Requisição
+
+```bash
+curl -X GET "http://localhost:8080/accounts/total-balance?userId=00000000-0000-0000-0000-000000000001" \
+  -H "Content-Type: application/json"
+```
+
+## Resposta de Sucesso
+
+```json
+{
+  "success": true,
+  "data": 6500.00
+}
+```
+
+## Resposta de Erro
+
+```json
+{
+  "success": false,
+  "error": "ERROR",
+  "message": "Erro ao calcular saldo total: userId é obrigatório"
+}
+```
+
+## Códigos de Status
+
+- `200 OK` - Saldo total calculado com sucesso
+- `400 Bad Request` - Parâmetros inválidos
+
+## Cálculo do Saldo Total
+
+O saldo total é calculado somando os saldos de todas as contas do usuário:
+
+- **Contas positivas**: Contribuem positivamente para o total
+- **Contas negativas**: Contribuem negativamente para o total (ex: cartões de crédito)
+- **Contas com saldo zero**: Não afetam o total
+
+## Exemplo de Cálculo
+
+| Conta | Tipo | Saldo | Contribuição |
+|-------|------|-------|--------------|
+| Conta Corrente | CHECKING | 1500.00 | +1500.00 |
+| Poupança | SAVINGS | 5000.00 | +5000.00 |
+| Cartão de Crédito | CREDIT | -1000.00 | -1000.00 |
+| **Total** | | | **5500.00** |
+
+## Observações
+
+- O resultado é retornado como um número decimal (BigDecimal)
+- Se o usuário não tiver contas, o saldo total será 0.00
+- O cálculo é feito em tempo real, considerando os saldos atuais
+- Contas de diferentes moedas são somadas sem conversão (assumindo mesma moeda)
+
+## Casos de Uso
+
+- Dashboard financeiro com visão geral do patrimônio
+- Relatórios de riqueza líquida
+- Análise de evolução patrimonial
+- Planejamento financeiro
+
+## Considerações Técnicas
+
+- O cálculo é otimizado para performance
+- Resultados são precisos até 2 casas decimais
+- O endpoint é ideal para atualizações frequentes de dashboards 

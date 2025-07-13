@@ -1,0 +1,154 @@
+---
+title: "Transações Recorrentes"
+description: "Endpoint para listar transações recorrentes de um usuário"
+method: "GET"
+endpoint: "/transactions/recurring"
+---
+
+# Transações Recorrentes
+
+Retorna todas as transações recorrentes de um usuário específico.
+
+## Endpoint
+
+```
+GET /transactions/recurring
+```
+
+## Parâmetros de Query
+
+| Parâmetro | Tipo | Obrigatório | Descrição |
+|-----------|------|-------------|-----------|
+| `userId` | string | ✅ | ID do usuário |
+
+## Exemplo de Requisição
+
+```bash
+curl -X GET "http://localhost:8080/transactions/recurring?userId=00000000-0000-0000-0000-000000000001" \
+  -H "Content-Type: application/json"
+```
+
+## Resposta de Sucesso
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "description": "Aluguel",
+      "amount": 1200.00,
+      "type": "EXPENSE",
+      "category": "550e8400-e29b-41d4-a716-446655440001",
+      "account": "550e8400-e29b-41d4-a716-446655440002",
+      "date": "2024-01-05",
+      "tags": ["moradia", "aluguel"],
+      "recurring": true,
+      "recurringId": "550e8400-e29b-41d4-a716-446655440003",
+      "attachment": null,
+      "notes": "Aluguel mensal",
+      "createdAt": "2024-01-01T10:00:00Z",
+      "updatedAt": "2024-01-01T10:00:00Z"
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440004",
+      "description": "Salário",
+      "amount": 5000.00,
+      "type": "INCOME",
+      "category": "550e8400-e29b-41d4-a716-446655440005",
+      "account": "550e8400-e29b-41d4-a716-446655440006",
+      "date": "2024-01-30",
+      "tags": ["trabalho", "salário"],
+      "recurring": true,
+      "recurringId": "550e8400-e29b-41d4-a716-446655440007",
+      "attachment": null,
+      "notes": "Salário mensal",
+      "createdAt": "2024-01-01T10:00:00Z",
+      "updatedAt": "2024-01-01T10:00:00Z"
+    }
+  ]
+}
+```
+
+## Resposta de Erro
+
+```json
+{
+  "success": false,
+  "error": "ERROR",
+  "message": "Erro ao buscar transações recorrentes: userId é obrigatório"
+}
+```
+
+## Códigos de Status
+
+- `200 OK` - Sucesso
+- `400 Bad Request` - Parâmetros inválidos
+
+## Estrutura da Resposta
+
+### TransactionDto
+
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `id` | string | ID único da transação |
+| `description` | string | Descrição da transação |
+| `amount` | BigDecimal | Valor da transação |
+| `type` | string | Tipo (INCOME, EXPENSE) |
+| `category` | string | ID da categoria |
+| `account` | string | ID da conta |
+| `date` | LocalDate | Data da transação |
+| `tags` | List<string> | Tags associadas |
+| `recurring` | boolean | Sempre true para este endpoint |
+| `recurringId` | string | ID da transação recorrente |
+| `attachment` | string | URL do anexo |
+| `notes` | string | Observações |
+| `createdAt` | LocalDateTime | Data de criação |
+| `updatedAt` | LocalDateTime | Data de atualização |
+
+## Tipos de Transações Recorrentes
+
+### Despesas Recorrentes Comuns
+- **Aluguel** - Pagamento mensal de moradia
+- **Contas de Luz/Água/Gás** - Serviços públicos
+- **Internet/Telefone** - Serviços de comunicação
+- **Assinaturas** - Streaming, revistas, etc.
+- **Seguros** - Auto, vida, saúde, etc.
+- **Financiamentos** - Carro, casa, etc.
+
+### Receitas Recorrentes Comuns
+- **Salário** - Remuneração mensal
+- **Freelance** - Trabalhos recorrentes
+- **Investimentos** - Dividendos, juros
+- **Aluguel Recebido** - Renda de imóveis
+- **Pensão** - Benefícios recorrentes
+
+## Observações
+
+- Apenas transações marcadas como `recurring: true` são retornadas
+- O campo `recurringId` identifica o grupo de transações recorrentes
+- Transações recorrentes são úteis para planejamento financeiro
+- Podem ser usadas para criar transações futuras automaticamente
+- Ajudam na previsão de fluxo de caixa
+
+## Casos de Uso
+
+- **Planejamento Financeiro**: Visualizar despesas e receitas fixas
+- **Orçamento**: Base para definição de limites de gastos
+- **Fluxo de Caixa**: Previsão de entradas e saídas futuras
+- **Automação**: Criação automática de transações recorrentes
+- **Relatórios**: Análise de padrões de gastos e receitas
+
+## Integração com Outros Endpoints
+
+- **Criar Transação**: Pode usar dados de transações recorrentes como template
+- **Atualizar Transação**: Modificar configurações de recorrência
+- **Listar Transações**: Filtrar por `recurring: true`
+- **Relatórios**: Incluir transações recorrentes em análises
+
+## Considerações Técnicas
+
+- Transações recorrentes são armazenadas na tabela `recurring_transactions`
+- Cada transação recorrente tem um `recurringId` único
+- O sistema pode gerar transações futuras baseadas na configuração
+- Frequências suportadas: mensal, semanal, quinzenal, etc. 

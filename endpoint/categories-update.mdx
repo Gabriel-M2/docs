@@ -1,0 +1,117 @@
+---
+title: "Atualizar Categoria"
+description: "Endpoint para atualizar os dados de uma categoria existente"
+method: "PUT"
+endpoint: "/categories/{id}"
+---
+
+# Atualizar Categoria
+
+Atualiza os dados de uma categoria existente. Todos os campos são opcionais - apenas os campos fornecidos serão atualizados.
+
+## Endpoint
+
+```
+PUT /categories/{id}
+```
+
+## Parâmetros de Path
+
+| Parâmetro | Tipo | Obrigatório | Descrição |
+|-----------|------|-------------|-----------|
+| `id` | string | ✅ | ID único da categoria |
+
+## Parâmetros de Query
+
+| Parâmetro | Tipo | Obrigatório | Descrição |
+|-----------|------|-------------|-----------|
+| `userId` | string | ✅ | ID do usuário |
+
+## Corpo da Requisição
+
+```json
+{
+  "name": "Alimentação Atualizada",
+  "type": "EXPENSE",
+  "color": "#DC2626",
+  "icon": "utensils",
+  "budget": 1000.00
+}
+```
+
+### CategoryUpdateRequest
+
+| Campo | Tipo | Obrigatório | Validação | Descrição |
+|-------|------|-------------|-----------|-----------|
+| `name` | string | ❌ | Máx 100 chars | Novo nome da categoria |
+| `type` | string | ❌ | INCOME/EXPENSE | Novo tipo da categoria |
+| `color` | string | ❌ | Máx 7 chars | Nova cor para exibição |
+| `icon` | string | ❌ | Máx 50 chars | Novo ícone para exibição |
+| `budget` | BigDecimal | ❌ | ≥ 0 | Novo orçamento |
+
+## Exemplo de Requisição
+
+```bash
+curl -X PUT "http://localhost:8080/categories/550e8400-e29b-41d4-a716-446655440000?userId=00000000-0000-0000-0000-000000000001" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Alimentação Atualizada",
+    "budget": 1000.00,
+    "color": "#DC2626"
+  }'
+```
+
+## Resposta de Sucesso
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "name": "Alimentação Atualizada",
+    "type": "EXPENSE",
+    "color": "#DC2626",
+    "icon": "utensils",
+    "budget": 1000.00,
+    "spent": 450.00
+  }
+}
+```
+
+## Resposta de Erro
+
+```json
+{
+  "success": false,
+  "error": "ERROR",
+  "message": "Categoria já existe com este nome"
+}
+```
+
+## Códigos de Status
+
+- `200 OK` - Categoria atualizada com sucesso
+- `400 Bad Request` - Dados inválidos ou nome já existe
+- `404 Not Found` - Categoria não encontrada
+
+## Observações
+
+- Apenas os campos fornecidos no corpo da requisição serão atualizados
+- Se um novo nome for fornecido, ele deve ser único para o usuário
+- A categoria deve pertencer ao usuário especificado no parâmetro `userId`
+- O campo `spent` não pode ser atualizado diretamente (é calculado automaticamente)
+- Alterar o tipo da categoria pode afetar as transações existentes
+
+## Validações
+
+- O nome da categoria deve ser único para o usuário (se fornecido)
+- O tipo deve ser INCOME ou EXPENSE (se fornecido)
+- O orçamento deve ser maior ou igual a zero (se fornecido)
+- O nome da categoria deve ter no máximo 100 caracteres (se fornecido)
+
+## Impacto das Alterações
+
+- **Alteração de nome**: Afeta apenas a exibição, não as transações existentes
+- **Alteração de tipo**: Pode afetar relatórios e análises
+- **Alteração de orçamento**: Afeta apenas o controle de orçamento futuro
+- **Alteração de cor/ícone**: Afeta apenas a exibição visual 

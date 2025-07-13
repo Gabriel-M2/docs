@@ -1,0 +1,141 @@
+---
+title: "Criar Transação"
+description: "Endpoint para criar uma nova transação"
+method: "POST"
+endpoint: "/transactions"
+---
+
+# Criar Transação
+
+Cria uma nova transação para o usuário especificado.
+
+## Endpoint
+
+```
+POST /transactions
+```
+
+## Parâmetros de Query
+
+| Parâmetro | Tipo | Obrigatório | Descrição |
+|-----------|------|-------------|-----------|
+| `userId` | string | ✅ | ID do usuário |
+
+## Corpo da Requisição
+
+```json
+{
+  "description": "Supermercado",
+  "amount": 150.50,
+  "type": "EXPENSE",
+  "category": "550e8400-e29b-41d4-a716-446655440001",
+  "account": "550e8400-e29b-41d4-a716-446655440002",
+  "date": "2024-01-15",
+  "tags": ["alimentação", "supermercado"],
+  "recurring": false,
+  "recurringId": null,
+  "attachment": "https://example.com/attachments/receipt.pdf",
+  "notes": "Compra do mês - produtos de limpeza e alimentos"
+}
+```
+
+### TransactionCreateRequest
+
+| Campo | Tipo | Obrigatório | Validação | Descrição |
+|-------|------|-------------|-----------|-----------|
+| `description` | string | ✅ | Máx 255 chars | Descrição da transação |
+| `amount` | BigDecimal | ✅ | > 0 | Valor da transação |
+| `type` | string | ✅ | INCOME/EXPENSE | Tipo da transação |
+| `category` | string | ✅ | UUID válido | ID da categoria |
+| `account` | string | ✅ | UUID válido | ID da conta |
+| `date` | LocalDate | ✅ | Data válida | Data da transação |
+| `tags` | List<string> | ❌ | Máx 10 tags | Tags associadas |
+| `recurring` | boolean | ❌ | - | Se é recorrente |
+| `recurringId` | string | ❌ | UUID válido | ID da transação recorrente |
+| `attachment` | string | ❌ | URL válida | URL do anexo |
+| `notes` | string | ❌ | Máx 500 chars | Observações |
+
+## Exemplo de Requisição
+
+```bash
+curl -X POST "http://localhost:8080/transactions?userId=00000000-0000-0000-0000-000000000001" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "description": "Supermercado",
+    "amount": 150.50,
+    "type": "EXPENSE",
+    "category": "550e8400-e29b-41d4-a716-446655440001",
+    "account": "550e8400-e29b-41d4-a716-446655440002",
+    "date": "2024-01-15",
+    "tags": ["alimentação", "supermercado"],
+    "notes": "Compra do mês"
+  }'
+```
+
+## Resposta de Sucesso
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "description": "Supermercado",
+    "amount": 150.50,
+    "type": "EXPENSE",
+    "category": "550e8400-e29b-41d4-a716-446655440001",
+    "account": "550e8400-e29b-41d4-a716-446655440002",
+    "date": "2024-01-15",
+    "tags": ["alimentação", "supermercado"],
+    "recurring": false,
+    "recurringId": null,
+    "attachment": null,
+    "notes": "Compra do mês",
+    "createdAt": "2024-01-15T10:30:00Z",
+    "updatedAt": "2024-01-15T10:30:00Z"
+  }
+}
+```
+
+## Resposta de Erro
+
+```json
+{
+  "success": false,
+  "error": "ERROR",
+  "message": "Categoria não encontrada"
+}
+```
+
+## Códigos de Status
+
+- `201 Created` - Transação criada com sucesso
+- `400 Bad Request` - Dados inválidos ou entidades não encontradas
+
+## Tipos de Transação
+
+- `INCOME` - Receitas (salários, investimentos, etc.)
+- `EXPENSE` - Despesas (alimentação, transporte, etc.)
+
+## Validações
+
+- A categoria deve existir e pertencer ao usuário
+- A conta deve existir e pertencer ao usuário
+- O valor deve ser maior que zero
+- A data deve ser uma data válida
+- A descrição deve ter no máximo 255 caracteres
+- As notas devem ter no máximo 500 caracteres
+- Máximo de 10 tags por transação
+
+## Impacto da Criação
+
+- O saldo da conta será atualizado automaticamente
+- Se a categoria tiver orçamento, o campo `spent` será atualizado
+- Se for uma transação recorrente, será criada uma entrada na tabela de transações recorrentes
+- Logs de auditoria serão criados
+
+## Observações
+
+- O campo `recurringId` é preenchido automaticamente para transações recorrentes
+- O campo `attachment` deve ser uma URL válida se fornecido
+- As tags são opcionais e podem ser usadas para categorização adicional
+- O campo `notes` é útil para observações detalhadas sobre a transação 

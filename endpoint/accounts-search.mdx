@@ -1,0 +1,96 @@
+---
+title: "Buscar Contas"
+description: "Endpoint para buscar contas por nome usando busca textual"
+method: "GET"
+endpoint: "/accounts/search"
+---
+
+# Buscar Contas
+
+Realiza uma busca textual nas contas do usuário, retornando contas cujo nome contenha o termo de busca.
+
+## Endpoint
+
+```
+GET /accounts/search
+```
+
+## Parâmetros de Query
+
+| Parâmetro | Tipo | Obrigatório | Descrição |
+|-----------|------|-------------|-----------|
+| `q` | string | ✅ | Termo de busca |
+| `userId` | string | ✅ | ID do usuário |
+
+## Exemplo de Requisição
+
+```bash
+curl -X GET "http://localhost:8080/accounts/search?q=corrente&userId=00000000-0000-0000-0000-000000000001" \
+  -H "Content-Type: application/json"
+```
+
+## Resposta de Sucesso
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "name": "Conta Corrente",
+      "type": "CHECKING",
+      "balance": 1500.00,
+      "currency": "BRL",
+      "color": "#3B82F6",
+      "icon": "bank"
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440002",
+      "name": "Conta Corrente Empresarial",
+      "type": "CHECKING",
+      "balance": 5000.00,
+      "currency": "BRL",
+      "color": "#8B5CF6",
+      "icon": "building"
+    }
+  ]
+}
+```
+
+## Resposta de Erro
+
+```json
+{
+  "success": false,
+  "error": "ERROR",
+  "message": "Erro ao buscar contas: Termo de busca é obrigatório"
+}
+```
+
+## Códigos de Status
+
+- `200 OK` - Busca realizada com sucesso
+- `400 Bad Request` - Parâmetros inválidos
+
+## Características da Busca
+
+- **Case-insensitive**: A busca não diferencia maiúsculas de minúsculas
+- **Busca parcial**: Retorna contas que contenham o termo de busca em qualquer parte do nome
+- **Filtro por usuário**: Apenas contas do usuário especificado são consideradas
+- **Resultados ordenados**: As contas são retornadas na ordem padrão do sistema
+
+## Exemplos de Busca
+
+| Termo de Busca | Resultados Esperados |
+|----------------|---------------------|
+| `corrente` | Conta Corrente, Conta Corrente Empresarial |
+| `poupança` | Poupança, Conta Poupança |
+| `cartão` | Cartão de Crédito, Cartão Débito |
+| `banco` | Contas com "banco" no nome |
+
+## Observações
+
+- A busca é realizada apenas no campo `name` das contas
+- Se nenhuma conta for encontrada, retorna uma lista vazia
+- O termo de busca deve ter pelo menos 1 caractere
+- A busca é otimizada para performance com índices no banco de dados 

@@ -1,0 +1,94 @@
+---
+title: "Deletar Categoria"
+description: "Endpoint para deletar uma categoria específica"
+method: "DELETE"
+endpoint: "/categories/{id}"
+---
+
+# Deletar Categoria
+
+Remove uma categoria específica do sistema. A categoria deve pertencer ao usuário especificado.
+
+## Endpoint
+
+```
+DELETE /categories/{id}
+```
+
+## Parâmetros de Path
+
+| Parâmetro | Tipo | Obrigatório | Descrição |
+|-----------|------|-------------|-----------|
+| `id` | string | ✅ | ID único da categoria |
+
+## Parâmetros de Query
+
+| Parâmetro | Tipo | Obrigatório | Descrição |
+|-----------|------|-------------|-----------|
+| `userId` | string | ✅ | ID do usuário |
+
+## Exemplo de Requisição
+
+```bash
+curl -X DELETE "http://localhost:8080/categories/550e8400-e29b-41d4-a716-446655440000?userId=00000000-0000-0000-0000-000000000001" \
+  -H "Content-Type: application/json"
+```
+
+## Resposta de Sucesso
+
+```json
+{
+  "success": true,
+  "message": "Categoria deletada com sucesso"
+}
+```
+
+## Resposta de Erro
+
+```json
+{
+  "success": false,
+  "error": "ERROR",
+  "message": "Categoria não encontrada"
+}
+```
+
+## Códigos de Status
+
+- `200 OK` - Categoria deletada com sucesso
+- `400 Bad Request` - Erro ao deletar categoria
+- `404 Not Found` - Categoria não encontrada
+
+## Observações
+
+- A categoria deve pertencer ao usuário especificado no parâmetro `userId`
+- A operação é irreversível - todos os dados da categoria serão perdidos
+- Recomenda-se verificar se não há transações associadas antes de deletar
+- O sistema pode implementar verificações adicionais para evitar deleção de categorias com transações
+
+## Considerações de Segurança
+
+- Apenas o proprietário da categoria pode deletá-la
+- A operação requer autenticação e autorização
+- Logs de auditoria devem ser mantidos para esta operação
+
+## Impacto da Deleção
+
+- **Transações existentes**: Podem ficar sem categoria associada
+- **Relatórios**: Dados históricos podem ser afetados
+- **Orçamentos**: Configurações de orçamento serão perdidas
+- **Dashboards**: Gráficos e análises podem ser impactados
+
+## Casos de Uso
+
+- Remoção de categorias não utilizadas
+- Correção de dados duplicados
+- Limpeza de dados de teste
+- Reorganização da estrutura de categorias
+
+## Recomendações
+
+- Faça backup dos dados antes de deletar categorias importantes
+- Considere migrar transações para outras categorias antes da deleção
+- Verifique o impacto em relatórios e análises
+- Documente a razão da deleção para auditoria 

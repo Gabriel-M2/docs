@@ -1,0 +1,102 @@
+---
+title: "Listar Contas"
+description: "Endpoint para listar todas as contas de um usuário ou filtrar por tipo"
+method: "GET"
+endpoint: "/accounts"
+---
+
+# Listar Contas
+
+Retorna todas as contas de um usuário específico, com opção de filtrar por tipo.
+
+## Endpoint
+
+```
+GET /accounts
+```
+
+## Parâmetros de Query
+
+| Parâmetro | Tipo | Obrigatório | Descrição |
+|-----------|------|-------------|-----------|
+| `userId` | string | ✅ | ID do usuário |
+| `type` | string | ❌ | Tipo da conta (ex: CHECKING, SAVINGS, CREDIT) |
+
+## Exemplo de Requisição
+
+```bash
+curl -X GET "http://localhost:8080/accounts?userId=00000000-0000-0000-0000-000000000001" \
+  -H "Content-Type: application/json"
+```
+
+### Com filtro por tipo
+
+```bash
+curl -X GET "http://localhost:8080/accounts?userId=00000000-0000-0000-0000-000000000001&type=CHECKING" \
+  -H "Content-Type: application/json"
+```
+
+## Resposta de Sucesso
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "name": "Conta Corrente",
+      "type": "CHECKING",
+      "balance": 1500.00,
+      "currency": "BRL",
+      "color": "#3B82F6",
+      "icon": "bank"
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440001",
+      "name": "Poupança",
+      "type": "SAVINGS",
+      "balance": 5000.00,
+      "currency": "BRL",
+      "color": "#10B981",
+      "icon": "piggy-bank"
+    }
+  ]
+}
+```
+
+## Resposta de Erro
+
+```json
+{
+  "success": false,
+  "error": "ERROR",
+  "message": "userId é obrigatório"
+}
+```
+
+## Códigos de Status
+
+- `200 OK` - Sucesso
+- `400 Bad Request` - Parâmetros inválidos ou userId não fornecido
+
+## Estrutura da Resposta
+
+### AccountDto
+
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `id` | string | ID único da conta |
+| `name` | string | Nome da conta |
+| `type` | string | Tipo da conta (CHECKING, SAVINGS, CREDIT, etc.) |
+| `balance` | BigDecimal | Saldo atual da conta |
+| `currency` | string | Moeda da conta (BRL, USD, EUR, etc.) |
+| `color` | string | Cor para exibição (formato hexadecimal) |
+| `icon` | string | Ícone para exibição |
+
+## Tipos de Conta Disponíveis
+
+- `CHECKING` - Conta Corrente
+- `SAVINGS` - Poupança
+- `CREDIT` - Cartão de Crédito
+- `INVESTMENT` - Investimento
+- `CASH` - Dinheiro em Espécie 

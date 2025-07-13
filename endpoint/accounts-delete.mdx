@@ -1,0 +1,80 @@
+---
+title: "Deletar Conta"
+description: "Endpoint para deletar uma conta específica"
+method: "DELETE"
+endpoint: "/accounts/{id}"
+---
+
+# Deletar Conta
+
+Remove uma conta específica do sistema. A conta deve pertencer ao usuário especificado.
+
+## Endpoint
+
+```
+DELETE /accounts/{id}
+```
+
+## Parâmetros de Path
+
+| Parâmetro | Tipo | Obrigatório | Descrição |
+|-----------|------|-------------|-----------|
+| `id` | string | ✅ | ID único da conta |
+
+## Parâmetros de Query
+
+| Parâmetro | Tipo | Obrigatório | Descrição |
+|-----------|------|-------------|-----------|
+| `userId` | string | ✅ | ID do usuário |
+
+## Exemplo de Requisição
+
+```bash
+curl -X DELETE "http://localhost:8080/accounts/550e8400-e29b-41d4-a716-446655440000?userId=00000000-0000-0000-0000-000000000001" \
+  -H "Content-Type: application/json"
+```
+
+## Resposta de Sucesso
+
+```json
+{
+  "success": true,
+  "message": "Conta deletada com sucesso"
+}
+```
+
+## Resposta de Erro
+
+```json
+{
+  "success": false,
+  "error": "ERROR",
+  "message": "Conta não encontrada"
+}
+```
+
+## Códigos de Status
+
+- `200 OK` - Conta deletada com sucesso
+- `400 Bad Request` - Erro ao deletar conta
+- `404 Not Found` - Conta não encontrada
+
+## Observações
+
+- A conta deve pertencer ao usuário especificado no parâmetro `userId`
+- A operação é irreversível - todos os dados da conta serão perdidos
+- Recomenda-se verificar se não há transações associadas antes de deletar
+- O sistema pode implementar verificações adicionais para evitar deleção de contas com transações
+
+## Considerações de Segurança
+
+- Apenas o proprietário da conta pode deletá-la
+- A operação requer autenticação e autorização
+- Logs de auditoria devem ser mantidos para esta operação
+
+## Casos de Uso
+
+- Remoção de contas não utilizadas
+- Correção de dados duplicados
+- Limpeza de dados de teste
+- Migração de dados entre sistemas 

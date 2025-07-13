@@ -1,0 +1,150 @@
+---
+title: "Atualizar Transação"
+description: "Endpoint para atualizar os dados de uma transação existente"
+method: "PUT"
+endpoint: "/transactions/{id}"
+---
+
+# Atualizar Transação
+
+Atualiza os dados de uma transação existente. Todos os campos são opcionais - apenas os campos fornecidos serão atualizados.
+
+## Endpoint
+
+```
+PUT /transactions/{id}
+```
+
+## Parâmetros de Path
+
+| Parâmetro | Tipo | Obrigatório | Descrição |
+|-----------|------|-------------|-----------|
+| `id` | string | ✅ | ID único da transação |
+
+## Parâmetros de Query
+
+| Parâmetro | Tipo | Obrigatório | Descrição |
+|-----------|------|-------------|-----------|
+| `userId` | string | ✅ | ID do usuário |
+
+## Corpo da Requisição
+
+```json
+{
+  "description": "Supermercado Atualizado",
+  "amount": 180.00,
+  "type": "EXPENSE",
+  "category": "550e8400-e29b-41d4-a716-446655440001",
+  "account": "550e8400-e29b-41d4-a716-446655440002",
+  "date": "2024-01-15",
+  "tags": ["alimentação", "supermercado", "limpeza"],
+  "notes": "Compra do mês atualizada"
+}
+```
+
+### TransactionUpdateRequest
+
+| Campo | Tipo | Obrigatório | Validação | Descrição |
+|-------|------|-------------|-----------|-----------|
+| `description` | string | ❌ | Máx 255 chars | Nova descrição |
+| `amount` | BigDecimal | ❌ | > 0 | Novo valor |
+| `type` | string | ❌ | INCOME/EXPENSE | Novo tipo |
+| `category` | string | ❌ | UUID válido | Nova categoria |
+| `account` | string | ❌ | UUID válido | Nova conta |
+| `date` | LocalDate | ❌ | Data válida | Nova data |
+| `tags` | List<string> | ❌ | Máx 10 tags | Novas tags |
+| `attachment` | string | ❌ | URL válida | Novo anexo |
+| `notes` | string | ❌ | Máx 500 chars | Novas observações |
+
+## Exemplo de Requisição
+
+```bash
+curl -X PUT "http://localhost:8080/transactions/550e8400-e29b-41d4-a716-446655440000?userId=00000000-0000-0000-0000-000000000001" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "description": "Supermercado Atualizado",
+    "amount": 180.00,
+    "notes": "Compra do mês atualizada"
+  }'
+```
+
+## Resposta de Sucesso
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "description": "Supermercado Atualizado",
+    "amount": 180.00,
+    "type": "EXPENSE",
+    "category": "550e8400-e29b-41d4-a716-446655440001",
+    "account": "550e8400-e29b-41d4-a716-446655440002",
+    "date": "2024-01-15",
+    "tags": ["alimentação", "supermercado"],
+    "recurring": false,
+    "recurringId": null,
+    "attachment": null,
+    "notes": "Compra do mês atualizada",
+    "createdAt": "2024-01-15T10:30:00Z",
+    "updatedAt": "2024-01-15T11:45:00Z"
+  }
+}
+```
+
+## Resposta de Erro
+
+```json
+{
+  "success": false,
+  "error": "ERROR",
+  "message": "Transação não encontrada"
+}
+```
+
+## Códigos de Status
+
+- `200 OK` - Transação atualizada com sucesso
+- `400 Bad Request` - Dados inválidos ou entidades não encontradas
+- `404 Not Found` - Transação não encontrada
+
+## Observações
+
+- Apenas os campos fornecidos no corpo da requisição serão atualizados
+- A transação deve pertencer ao usuário especificado no parâmetro `userId`
+- Campos como `recurring`, `recurringId`, `createdAt` e `updatedAt` não podem ser alterados
+- O campo `updatedAt` é atualizado automaticamente
+
+## Impacto das Alterações
+
+### Alteração de Valor
+- O saldo da conta será recalculado
+- Se a categoria tiver orçamento, o campo `spent` será atualizado
+
+### Alteração de Categoria
+- O campo `spent` da categoria antiga será reduzido
+- O campo `spent` da nova categoria será aumentado
+
+### Alteração de Conta
+- O saldo da conta antiga será ajustado
+- O saldo da nova conta será ajustado
+
+### Alteração de Tipo
+- Pode afetar relatórios e análises
+- O saldo da conta será recalculado considerando o novo tipo
+
+## Validações
+
+- A categoria deve existir e pertencer ao usuário (se fornecida)
+- A conta deve existir e pertencer ao usuário (se fornecida)
+- O valor deve ser maior que zero (se fornecido)
+- A data deve ser uma data válida (se fornecida)
+- A descrição deve ter no máximo 255 caracteres (se fornecida)
+- As notas devem ter no máximo 500 caracteres (se fornecidas)
+- Máximo de 10 tags por transação (se fornecidas)
+
+## Considerações de Segurança
+
+- Apenas o proprietário da transação pode alterá-la
+- Logs de auditoria são mantidos para todas as alterações
+- Transações recorrentes podem ter restrições especiais 

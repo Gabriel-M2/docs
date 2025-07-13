@@ -1,0 +1,107 @@
+---
+title: "Status Detalhado da API"
+description: "Endpoint para obter informações detalhadas sobre o status da API"
+method: "GET"
+endpoint: "/test/health"
+---
+
+# Status Detalhado da API
+
+Retorna informações detalhadas sobre o status da API, incluindo versão e nome do serviço.
+
+## Endpoint
+
+```
+GET /test/health
+```
+
+## Exemplo de Requisição
+
+```bash
+curl -X GET "http://localhost:8080/test/health" \
+  -H "Content-Type: application/json"
+```
+
+## Resposta de Sucesso
+
+```json
+{
+  "status": "UP",
+  "service": "Finance API",
+  "version": "1.0.0"
+}
+```
+
+## Estrutura da Resposta
+
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `status` | string | Status do serviço (UP/DOWN) |
+| `service` | string | Nome do serviço |
+| `version` | string | Versão atual da API |
+
+## Códigos de Status
+
+- `200 OK` - API funcionando normalmente
+
+## Estados Possíveis
+
+### Status UP
+- API está funcionando corretamente
+- Todos os componentes estão operacionais
+- Aceitando requisições normalmente
+
+### Status DOWN
+- API não está funcionando
+- Componentes críticos falharam
+- Não aceita requisições
+
+## Casos de Uso
+
+- **Monitoramento Avançado**: Verificação detalhada do status
+- **Versionamento**: Identificação da versão em produção
+- **DevOps**: Integração com pipelines de CI/CD
+- **Suporte**: Identificação de versões para troubleshooting
+- **Auditoria**: Rastreamento de versões em produção
+
+## Observações
+
+- Este endpoint não requer autenticação
+- Informações são estáticas (não consultam banco de dados)
+- Útil para identificação de versões em produção
+- Resposta rápida e confiável
+- Ideal para sistemas de monitoramento
+
+## Integração com Ferramentas
+
+### Prometheus
+```yaml
+scrape_configs:
+  - job_name: 'finance-api'
+    metrics_path: /test/health
+    static_configs:
+      - targets: ['localhost:8080']
+```
+
+### Grafana
+- Use o endpoint para criar dashboards de status
+- Configure alertas baseados no status
+- Monitore versões em produção
+
+### ELK Stack
+- Configure logs para capturar status changes
+- Crie alertas para mudanças de versão
+- Monitore performance baseado no status
+
+## Versionamento
+
+A versão segue o padrão Semantic Versioning (SemVer):
+- **Major**: Mudanças incompatíveis
+- **Minor**: Novas funcionalidades compatíveis
+- **Patch**: Correções de bugs
+
+### Exemplos de Versões
+- `1.0.0` - Versão inicial
+- `1.1.0` - Novas funcionalidades
+- `1.1.1` - Correção de bug
+- `2.0.0` - Breaking changes 
